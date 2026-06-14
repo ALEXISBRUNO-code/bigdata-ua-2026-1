@@ -56,9 +56,9 @@ _Respuesta_:
 
 3. **Modelo relacional rígido para datos no estructurados**: Los logs de la banca móvil, las grabaciones de atención al cliente, los comentarios en redes sociales o las imágenes de vouchers no caben eficientemente en esquemas tabulares fijos. Forzarlos en Oracle implica transformaciones costosas o pérdida de información valiosa para analítica avanzada.
 
+4. **Costo de licenciamiento insostenible a escala**:
 **Razón de negocio:**
-
-4. **Costo de licenciamiento insostenible a escala**: Oracle Enterprise cobra por core de procesador. Escalar para manejar petabytes de datos con licencias Oracle llevaría el costo operativo a niveles inviables frente a alternativas open-source como Hadoop/Spark o soluciones cloud como AWS Redshift o Google BigQuery, que ofrecen mayor escala a fracción del costo.
+Oracle Enterprise cobra por core de procesador. Escalar para manejar petabytes de datos con licencias Oracle llevaría el costo operativo a niveles inviables frente a alternativas open-source como Hadoop/Spark o soluciones cloud como AWS Redshift o Google BigQuery, que ofrecen mayor escala a fracción del costo.
 
 ---
 
@@ -93,7 +93,7 @@ Múltiples procesadores o cores acceden a la misma RAM física dentro de un úni
 **Memoria Distribuida (Distributed Memory):**
 Cada nodo del clúster tiene su propia RAM independiente. Los nodos se comunican mediante mensajes por red. La escalabilidad es horizontal: se agregan más nodos según la necesidad, sin límite teórico de crecimiento. Esta es la arquitectura que utilizan Hadoop HDFS y Apache Spark.
 
-```
+```bash
 MEMORIA COMPARTIDA:                    MEMORIA DISTRIBUIDA:
 ┌───────────────────────┐              ┌─────────┐  ┌─────────┐  ┌─────────┐
 │    RAM COMPARTIDA     │              │ NODO 1  │  │ NODO 2  │  │  NODO N │
@@ -119,7 +119,7 @@ Investiga y responde: ¿Qué empresa latinoamericana (puede ser peruana) ha impl
 - La solución Big Data que implementaron
 - Los resultados que obtuvieron
 
-_Fuente consultada (URL o libro)_: https://cloud.google.com/customers/falabella
+_Fuente consultada (URL o libro)_: [Google Cloud - Falabella](https://cloud.google.com/customers/falabella)
 
 _Respuesta_:
 
@@ -130,6 +130,7 @@ _Respuesta_:
 **Solución Big Data implementada:** Falabella migró a una plataforma de datos unificada en Google Cloud Platform, construyendo un Data Lake centralizado en Google Cloud Storage con pipelines de ingesta orquestados con Apache Beam/Dataflow. Implementaron BigQuery como Data Warehouse para analítica SQL a escala y modelos de Machine Learning en Vertex AI para recomendación de productos y predicción de quiebre de stock. Los datos de todos los canales (tienda física, web, app, CMR) convergen en una única capa de datos gobernada.
 
 **Resultados obtenidos:**
+
 - Reducción del sobre-stock en aproximadamente 20% gracias a predicción de demanda más precisa por tienda
 - Incremento en la tasa de conversión del e-commerce mediante recomendaciones personalizadas en tiempo real
 - Reducción del tiempo de generación de reportes de días a minutos
@@ -160,27 +161,27 @@ _Respuesta_:
 **1. Escalabilidad horizontal**
 El sistema debe poder crecer añadiendo más nodos al clúster, no solo mejorando hardware existente. La capacidad de procesamiento y almacenamiento debe crecer proporcionalmente al volumen de datos sin rediseñar la arquitectura.
 
-*Si no se cumple:* El sistema alcanza un techo de capacidad insuperable sin costosas migraciones; en el intertanto las consultas se degradan o fallan por saturación, afectando directamente la operación del negocio.
+_Si no se cumple:_ El sistema alcanza un techo de capacidad insuperable sin costosas migraciones; en el intertanto las consultas se degradan o fallan por saturación, afectando directamente la operación del negocio.
 
 **2. Tolerancia a fallos (Fault Tolerance)**
 Ante la caída de uno o varios nodos, el sistema debe continuar operando sin pérdida de datos ni interrupción del servicio, mediante replicación automática de datos y reanudación de tareas fallidas.
 
-*Si no se cumple:* Una falla de hardware convierte en pérdida de datos críticos e interrumpe servicios que en muchas organizaciones operan 24/7, con impacto económico y reputacional directo.
+_Si no se cumple:_ Una falla de hardware convierte en pérdida de datos críticos e interrumpe servicios que en muchas organizaciones operan 24/7, con impacto económico y reputacional directo.
 
 **3. Calidad y gobierno de datos (Veracidad)**
 Deben existir mecanismos de validación, limpieza, linaje y catálogo de datos. Los datos deben ser confiables y trazables desde su origen hasta su consumo final.
 
-*Si no se cumple:* Se trabaja con datos inconsistentes entre sistemas, generando análisis contradictorios y decisiones de negocio incorrectas — el clásico "garbage in, garbage out". En mi experiencia en la Norbert Wiener, la ausencia de este requisito hacía que diferentes áreas reportaran cifras distintas para el mismo KPI, paralizando la confianza en la analítica.
+_Si no se cumple:_ Se trabaja con datos inconsistentes entre sistemas, generando análisis contradictorios y decisiones de negocio incorrectas — el clásico "garbage in, garbage out". En mi experiencia en la Norbert Wiener, la ausencia de este requisito hacía que diferentes áreas reportaran cifras distintas para el mismo KPI, paralizando la confianza en la analítica.
 
 **4. Seguridad y cumplimiento normativo**
 Cifrado en tránsito y en reposo, control de acceso basado en roles (RBAC), auditoría de accesos y cumplimiento de regulaciones vigentes (Ley N.° 29733 de Protección de Datos Personales en Perú; GDPR si aplica para datos europeos).
 
-*Si no se cumple:* Se incumplen regulaciones con posibles sanciones económicas y legales; se expone información sensible a accesos no autorizados. En mi anterior empleo, la falta de arquitecturas establecidas llevaba exactamente a este escenario: datos sin trazabilidad, accesos sin auditar y dependencia de proveedores externos que procesaban datos que debían mantenerse internamente, violando parámetros básicos de seguridad.
+_Si no se cumple:_ Se incumplen regulaciones con posibles sanciones económicas y legales; se expone información sensible a accesos no autorizados. En mi anterior empleo, la falta de arquitecturas establecidas llevaba exactamente a este escenario: datos sin trazabilidad, accesos sin auditar y dependencia de proveedores externos que procesaban datos que debían mantenerse internamente, violando parámetros básicos de seguridad.
 
 **5. Latencia adecuada al caso de uso (batch vs. real-time)**
 La arquitectura debe diferenciar entre procesamiento batch (tolerante a latencias de horas, para reportes diarios) y streaming en tiempo real (latencia de milisegundos a segundos, para alertas y detección de fraude), y proveer la infraestructura adecuada para cada patrón.
 
-*Si no se cumple:* O se sacrifica la capacidad de análisis en tiempo real (perdiendo detección de fraudes o alertas operacionales) o se sobredimensiona infraestructura de streaming para casos que no la necesitan, incrementando costos innecesariamente.
+_Si no se cumple:_ O se sacrifica la capacidad de análisis en tiempo real (perdiendo detección de fraudes o alertas operacionales) o se sobredimensiona infraestructura de streaming para casos que no la necesitan, incrementando costos innecesariamente.
 
 ---
 
@@ -192,8 +193,6 @@ La empresa en la que trabajas actualmente, ¿tiene algún problema de datos que 
 - Qué tipo de datos implicaría (V's del Big Data)
 - Una propuesta inicial de solución (aunque sea básica)
 
-_(Si no puedes compartir información de tu empresa por confidencialidad, usa una empresa pública del sector)_
-
 _Respuesta_:
 
 Actualmente no me encuentro empleado; sin embargo, con 13 años de experiencia en el sector y habiendo apoyado a compañeros en la gestión de datos y en la comprensión de flujos como GIT durante ese tiempo, he podido identificar y documentar de primera mano una problemática estructural muy representativa en mi última posición en la **Universidad Norbert Wiener**.
@@ -202,12 +201,14 @@ Actualmente no me encuentro empleado; sin embargo, con 13 años de experiencia e
 La institución carecía de arquitecturas de datos bien establecidas. Los sistemas de las distintas áreas (académica, financiera, RRHH, operaciones, plataforma LMS) generaban datos en silos completamente desconectados, con formatos inconsistentes y sin ningún lineamiento de gobierno de datos. Esta situación tenía consecuencias operacionales muy concretas: varios procesos incumplían parámetros de seguridad porque la trazabilidad de los datos era inexistente — no había logs centralizados de quién accedía a qué información, cuándo y para qué fin. Para tareas que internamente deberían ser perfectamente manejables (consolidación de reportes entre áreas, análisis de comportamiento estudiantil, auditorías de pagos), se dependía de terceros y proveedores externos, incrementando costos, generando fricciones operacionales y, lo más grave, exponiendo datos potencialmente sensibles de estudiantes y de la institución a actores fuera de la organización.
 
 **Tipo de datos y V's del Big Data involucradas:**
+
 - **Variedad:** Datos académicos en SQL, pagos en ERP propietario, logs del LMS en JSON, grabaciones de clases en video y documentos de tesis en PDF convivían sin integración
 - **Veracidad (crítica):** Distintos sistemas reportaban cifras diferentes para el mismo KPI; sin una fuente única de verdad, nadie confiaba en los datos para tomar decisiones estratégicas
 - **Volumen:** Miles de estudiantes, millones de eventos de plataforma y años de histórico acumulados sin procesar ni analizar de forma consolidada
 - **Valor (ausente):** Los datos existían pero el valor no se materializaba; sin arquitectura adecuada, el dato era costo de almacenamiento, no activo estratégico
 
 **Propuesta de solución Big Data:**
+
 1. **Data Lake centralizado** (AWS S3 o Azure Data Lake) como capa de ingesta única para todos los sistemas fuente de la institución
 2. Pipelines orquestados con **Apache Airflow** para automatizar la integración y generar trazabilidad y auditoría de cada movimiento de datos
 3. **Catálogo de metadatos** (AWS Glue Data Catalog o Apache Atlas) para gobierno, linaje de datos y cumplimiento de la Ley N.° 29733
@@ -231,16 +232,19 @@ La institución carecía de arquitecturas de datos bien establecidas. Los sistem
 _Respuesta_:
 
 **a) Cálculo de registros:**
+
 - Por día: 8,000,000 clientes × 500 registros = **4,000,000,000 registros/día (4 mil millones)**
 - Por año: 4,000,000,000 × 365 = **1,460,000,000,000 registros/año (1.46 billones)**
 - Estimando 200 bytes promedio por registro: ~800 GB/día → ~292 TB/año solo en datos estructurados
 
 **b) Tipos de datos involucrados:**
-- *Estructurados:* CDRs (Call Detail Records) con timestamp, duración, número destino y costo; registros de SMS; logs de consumo de datos móviles (MB/día); historial de pagos
-- *Semi-estructurados:* Logs de la app en JSON; registros de geolocalización (coordenadas + timestamp); datos de plan contratado en formato XML/JSON de la API interna
-- *No estructurados:* Grabaciones de llamadas al call center (audio); tickets de atención al cliente en texto libre; comentarios en redes sociales mencionando a la operadora
+
+- _Estructurados:_ CDRs (Call Detail Records) con timestamp, duración, número destino y costo; registros de SMS; logs de consumo de datos móviles (MB/día); historial de pagos
+- _Semi-estructurados:_ Logs de la app en JSON; registros de geolocalización (coordenadas + timestamp); datos de plan contratado en formato XML/JSON de la API interna
+- _No estructurados:_ Grabaciones de llamadas al call center (audio); tickets de atención al cliente en texto libre; comentarios en redes sociales mencionando a la operadora
 
 **c) Las 5 V's más relevantes:**
+
 - **Volumen (crítica):** 4 mil millones de registros diarios define inequívocamente un caso Big Data; ninguna base de datos relacional convencional puede absorber esa carga
 - **Velocidad (alta):** Los CDRs se generan en tiempo real; el modelo de churn necesita datos actualizados frecuentemente para ser predictivo, no retrospectivo con semanas de retraso
 - **Veracidad (crítica):** Si los CDRs contienen errores (duplicados, timestamps incorrectos, montos erróneos), el modelo de predicción aprenderá patrones falsos y sus predicciones serán inútiles o contraproducentes para el negocio
@@ -248,7 +252,7 @@ _Respuesta_:
 **d) Tecnologías Big Data necesarias:**
 
 | Capa | Tecnología | Justificación |
-|------|-----------|---------------|
+| ------ | ----------- | --------------- |
 | Ingesta | Apache Kafka | Captura CDRs en tiempo real con alta throughput y baja latencia desde múltiples sistemas fuente |
 | Almacenamiento | Hadoop HDFS / AWS S3 | Data Lake para el volumen histórico de 1.46 billones de registros/año sin techo de escala |
 | Procesamiento | Apache Spark + MLlib | Procesamiento distribuido de features y entrenamiento/scoring del modelo de predicción de churn |
@@ -291,6 +295,7 @@ _Respuesta_:
 **Problema que resuelve:** Las instituciones de educación superior carecen de infraestructura centralizada de datos que permita cruzar en tiempo real información académica (notas, asistencia, actividad en LMS), financiera (pagos de pensiones, deudas) y social (satisfacción estudiantil, menciones en RRSS). La ausencia de estas capacidades obliga a depender de reportes manuales, silos de información y terceros para análisis básicos, generando retrasos en la detección de deserción estudiantil y dificultando decisiones estratégicas de rectorado.
 
 **5 V's presentes en el proyecto:**
+
 - **Volumen:** Miles de estudiantes activos generando millones de eventos en el LMS, pagos y registros académicos por ciclo
 - **Velocidad:** Los accesos al LMS y las transacciones de pago requieren ingesta en tiempo real para alertas oportunas
 - **Variedad:** Datos de notas en SQL (estructurado), logs de Moodle en JSON (semi-estructurado), comentarios de estudiantes en RRSS y grabaciones de clase (no estructurado)
@@ -311,7 +316,7 @@ _Link o descripción de tu diagrama_:
 
 **Descripción textual de la arquitectura:**
 
-```
+```bash
 FUENTES DE DATOS          INGESTA            ALMACENAMIENTO       PROCESAMIENTO        VISUALIZACIÓN
 ───────────────────────────────────────────────────────────────────────────────────────────────────
 ┌──────────────┐          ┌──────────┐       ┌─────────────┐      ┌─────────────┐     ┌──────────┐
@@ -350,4 +355,4 @@ FUENTES DE DATOS          INGESTA            ALMACENAMIENTO       PROCESAMIENTO 
 
 ---
 
-_Entrega: Subir al repositorio de GitHub Classroom o al foro de la plataforma virtual antes de la Semana 2_
+Entrega: Subir al repositorio de GitHub Classroom o al foro de la plataforma virtual antes de la Semana 2
